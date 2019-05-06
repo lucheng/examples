@@ -28,4 +28,4 @@ The following diagram shows what happens when you make a request to a service de
 9. [服务降级](https://blog.csdn.net/ityouknow/article/details/81230412)
 10. https://www.cnblogs.com/jinjiyese153/p/8669702.html
 11. https://blog.csdn.net/Crystalqy/article/details/79083857
-12. https://blog.csdn.net/Crystalqy/article/details/79083857
+12. https://www.cnblogs.com/haoxinyue/p/8260974.html
