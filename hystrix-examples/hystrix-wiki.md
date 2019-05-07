@@ -29,3 +29,4 @@ The following diagram shows what happens when you make a request to a service de
 10. https://www.cnblogs.com/jinjiyese153/p/8669702.html
 11. https://blog.csdn.net/Crystalqy/article/details/79083857
 12. https://www.cnblogs.com/haoxinyue/p/8260974.html
+13. [Hystrix工作原理（官方文档翻译）](https://segmentfault.com/a/1190000012439580)
