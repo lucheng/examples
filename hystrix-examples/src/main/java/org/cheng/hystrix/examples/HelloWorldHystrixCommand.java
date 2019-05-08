@@ -13,11 +13,16 @@ public class HelloWorldHystrixCommand extends HystrixCommand<String> {
 
 	@Override
 	protected String run() throws Exception {
-		 Thread.sleep(100);
+		 Thread.sleep(1000);
 		System.out.println("2-----" +Thread.currentThread().getName());
 		return "hello" + name;
 	}
-
+	
+	@Override
+	protected String getFallback() {
+		return super.getFallback();
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(" 1 ----- " + Thread.currentThread().getName());
 		String result = new HelloWorldHystrixCommand("test").execute();
