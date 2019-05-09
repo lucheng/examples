@@ -18,8 +18,8 @@ The following diagram shows what happens when you make a request to a service de
 
 下图展示了当使用 Hystrix 构造请求，请求到一个服务依赖项时所发生的流程：
 
-<a href="images/hystrix-command-flow-chart.png">[[images/hystrix-command-flow-chart-640.png]]
-_(Click for larger view)_ </a>
+
+<a href="images/hystrix-command-flow-chart.png">![alt text](images/hystrix-command-flow-chart.png "流程图")_(Click for larger view)_ </a>
 
 The following sections will explain this flow in greater detail:
 
