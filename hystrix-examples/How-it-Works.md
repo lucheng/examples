@@ -1,6 +1,8 @@
 ## Contents
-
+## 目录
 1. <a href="#Flow">Flow Chart</a>
+    
+    流程图
 1. <a href="#SequenceDiagram">Sequence Diagram</a>
 1. <a href="#CircuitBreaker">Circuit Breaker</a>
 1. <a href="#Isolation">Isolation</a>
@@ -120,86 +122,151 @@ Observable<K> ocValue = command.toObservable();    //cold observable
 
 The synchronous call `execute()` invokes `queue().get()`. `queue()` in turn invokes `toObservable().toBlocking().toFuture()`. Which is to say that ultimately every `HystrixCommand` is backed by an [`Observable`](http://reactivex.io/documentation/observable.html) implementation, even those commands that are intended to return single, simple values.
 
+同步调用方法execute()实际上调用的是 queue().get()；queue()反过来调用toObservable().toBlocking().toFuture()，也就是说所有的 HystrixCommand 的调用最终都是通过 Observable 来实现（netflix 的 oss 项目中大量使用了 rxJava），即使这些命令只是想返回单个值或者一些简单的值。
+
 <a name="flow3" />
 
 ### 3. Is the Response Cached?
+### 3. 是否缓存 Response
 
 If request caching is enabled for this command, and if the response to the request is available in the cache, this cached response will be immediately returned in the form of an `Observable`. (See <a href="#RequestCaching">&ldquo;Request Caching&rdquo;</a> below.)
+
+如果一个 Hystrix Command 的请求缓存被启用了，并且这个请求的响应在缓存中可用，那么这个被缓存的响应将会立即以 Observable 的形式返回（更详细看下面的“请求缓存”部分）。
 
 <a name="flow4" />
 
 ### 4. Is the Circuit Open?
+### 4. 断路器是否开启
 
 When you execute the command, Hystrix checks with the circuit-breaker to see if the circuit is open.
 
+当执行一个命令，Hystrix 会检查断路器（circuit-breaker）确认断路器是否是开启状态。
+
 If the circuit is open (or &ldquo;tripped&rdquo;) then Hystrix will not execute the command but will route the flow to (8) Get the Fallback.
 
+如果断路器是开启状态（或者“跳闸”），那么 Hystrix 将不会执行这些命令，这些失败的命令将会被路由到回调逻辑进行后续处理。
+
 If the circuit is closed then the flow proceeds to (5) to check if there is capacity available to run the command.
+
+如果断路器是关闭状态，那么执行流程将往下走到第5步：检查是否有足够的容量来运行该命令
 
 <a name="flow5" />
 
 ### 5. Is the Thread Pool/Queue/Semaphore Full?
 
+### 5. 线程池 / 队列 / 信号量 是否已满？
+
 If the thread-pool and queue (or semaphore, if not running in a thread) that are associated with the command are full then Hystrix will not execute the command but will immediately route the flow to (8) Get the Fallback.
+
+如果命令相关联的线程池和队列（不是线程模式时，判断依据为信号量）已满，那么 Hystrix 将不会执行命令，这些失败的命令也会被路由到回调逻辑进行后续处理。
 
 <a name="flow6" />
 
 ### 6. `HystrixObservableCommand.construct()` or `HystrixCommand.run()`
 
+### 6. 执行 Command 中的业务逻辑
+   
 Here, Hystrix invokes the request to the dependency by means of the method you have written for this purpose, one of the following:
+到这里，Hystrix 调用对依赖项的这些请求，方式如下：
+
 * [`HystrixCommand.run()`](http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommand.html#run\(\)) &mdash; returns a single response or throws an exception
+
+* HystrixCommand.run()——返回单个响应或抛出异常
+
 * [`HystrixObservableCommand.construct()`](http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixObservableCommand.html#construct\(\)) &mdash; returns an Observable that emits the response(s) or sends an `onError` notification
+
+* HystrixObservableCommand.construct()——返回 Observable 传播收到的响应或者发送一个 onError的通知 
 
 If the `run()` or `construct()` method exceeds the command&#8217;s timeout value, the thread will throw a `TimeoutException` (or a separate timer thread will, if the command itself is not running in its own thread). In that case Hystrix routes the response through 8. Get the Fallback, and it discards the eventual return value `run()` or `construct()` method if that method does not cancel/interrupt.  
 
+如果run()或construct()方法执行时长超过了命令的超时阀值，其线程将抛出一个TimeoutException（或者在一个单独的线程抛出，如果命令没有运行在它自己的线程）。这种情况下 Hystrix 将路由响应到第8步，获取回调逻辑；并且如果该方法没有取消或中断，它将放弃run()或construct()方法最终的返回值。
+
 Please note that there's no way to force the latent thread to stop work - the best Hystrix can do on the JVM is to throw it an InterruptedException. If the work wrapped by Hystrix does not respect InterruptedExceptions, the thread in the Hystrix thread pool will continue its work, though the client already received a TimeoutException. This behavior can saturate the Hystrix thread pool, though the load is 'correctly shed'. Most Java HTTP client libraries do not interpret InterruptedExceptions. So make sure to correctly configure connection and read/write timeouts on the HTTP clients.
 
+请注意，没有办法强制地停止延迟线程——Hystrix 能做的就是在 JVM 上抛出一个 InterruptedException。
+
 If the command did not throw any exceptions and it returned a response, Hystrix returns this response after it performs some some logging and metrics reporting. In the case of `run()`, Hystrix returns an `Observable` that emits the single response and then makes an `onCompleted` notification; in the case of `construct()` Hystrix returns the same `Observable` returned by `construct()`.
+
+如果由 Hystrix 包装过的逻辑没有注意处理 InterruptedExceptions，则 Hystrix 线程池中的线程将会继续运行，即使客户端已收到TimeoutException。这种行为会填满 Hystrix 对应命令的线程池，尽管负载是“correctly shed”。很多 Java Http Client 库没有说明InterruptedExceptions，因此请确保在HTTP客户端上正确配置连接和读/写的超时时长。
 
 <a name="flow7" />
 
 ### 7. Calculate Circuit Health
 
+### 7. 计算线路健康状况
+
 Hystrix reports successes, failures, rejections, and timeouts to the circuit breaker, which maintains a rolling set of counters that calculate statistics.
 
+Hystrix 向断路器报告成功，失败，拒绝和超时的数据，断路器维持一组实时跳动的计数器来统计数据。（HystrixCommandMetrics）
+
 It uses these stats to determine when the circuit should &ldquo;trip,&rdquo; at which point it short-circuits any subsequent requests until a recovery period elapses, upon which it closes the circuit again after first checking certain health checks.
+
+断路器使用这些统计数据来确定电路何时应该“跳闸”，什么时候该将所有后续的请求短路，直到恢复期过去，并在首次检查某些健康检查后会再次关闭电路。
 
 <a name="flow8" />
 
 ### 8. Get the Fallback
 
+### 8. 获取回调
+
 Hystrix tried to revert to your fallback whenever a command execution fails: when an exception is thrown by `construct()` or `run()` (6.), when the command is short-circuited because the circuit is open (4.), when the command&#8217;s thread pool and queue or semaphore are at capacity (5.), or when the command has exceeded its timeout length.
+
+当命令执行失败时，Hystrix 会试图恢复到 fallback 状态：当执行construct()或run()时抛出异常（第6步）；当命令因为断路器跳闸而短路时（第4步）；当该命令的线程池队列或信号量满时（第5步），或者当命令执行时长超过阀值时。
 
 Write your fallback to provide a generic response, without any network dependency, from an in-memory cache or by means of other static logic. _If you must use a network call in the fallback, you should do so by means of another `HystrixCommand` or `HystrixObservableCommand`._
 
+编写回调逻辑提供一个通用的响应，以便在不存在任何网络依赖项或者所有依赖项都失效时，能够从内存中的缓存中或其他静态逻辑中获取一个通用的响应（不至于在单个或多个依赖项失效时，产生连锁反应带崩整个应用）。如果必须在回调逻辑中使用网络请求，应该通过另一个HystrixCommand 或 HystrixObservableCommand 来完成。
+
 In the case of a `HystrixCommand`, to provide fallback logic you implement [`HystrixCommand.getFallback()`](http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommand.html#getFallback\(\)) which returns a single fallback value.
+
+在 HystrixCommand 中，在 HystrixCommand.getFallback()方法中提供自定义的回调逻辑，方法返回单个回调值。
 
 In the case of a `HystrixObservableCommand`, to provide fallback logic you implement [`HystrixObservableCommand.resumeWithFallback()`](http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixObservableCommand.html#resumeWithFallback\(\)) which returns an Observable that may emit a fallback value or values.
 
+在 HystrixObservableCommand 中，在HystrixObservableCommand.resumeWithFallback() 方法中提供自定义的回调逻辑，方法返回一个 可传播回调值的 Observable。
+
 If the fallback method returns a response then Hystrix will return this response to the caller. In the case of a `HystrixCommand.getFallback()`, it will return an Observable that emits the value returned from the method. In the case of `HystrixObservableCommand.resumeWithFallback()` it will return the same Observable returned from the method.
+
+如果 fallback 方法返回了响应，Hystrix 会将该响应返回给调用者。在 HystrixCommand 中，Hystrix 返回给调用者一个可传播响应值的 Observable；在 HystrixObservableCommand 中，Hystrix 将直接返回resumeWithFallback()返回的 Observable 对象
 
 If you have not implemented a fallback method for your Hystrix command, or if the fallback itself throws an exception, Hystrix still returns an Observable, but one that emits nothing and immediately terminates with an `onError` notification. It is through this `onError` notification that the exception that caused the command to fail is transmitted back to the caller.  (It is a poor practice to implement a fallback implementation that can fail. You should implement your fallback such that it is not performing any logic that could fail.)
 
+如果没有为 Hystrix 的命令提供fallback逻辑，或者fallback逻辑会抛出异常，Hystrix 仍然会返回一个 Observable 对象，但是没有传播值并且会立即终止传播，并发送一个onError通知。正是这个onError的通知会将导致命令失败的异常信息返回给调用者。（用户提供可能会失败的回调逻辑是一个很不好的做法，用户应该提供没有任何可能执行失败的回调逻辑）
+
 The result of a failed or nonexistent fallback will differ depending on how you invoked the Hystrix command:
 
+根据调用 Hystrix 命令方式的不同，失败时或不存在依赖项时的回调结果也会有所不同：
+
 * `execute()` &mdash; throws an exception
+* execute()——抛出异常
 * `queue()` &mdash; successfully returns a `Future`, but this `Future` will throw an exception if its `get()` method is called
+* queue()——成功时返回java.util.concurrent.Future，但如果调用 Future.get()将抛出异常
 * `observe()` &mdash; returns an `Observable` that, when you subscribe to it, will immediately terminate by calling the subscriber&#8217;s `onError` method
+* observe()——返回 Observable 对象，当你订阅该 Observable 时，将会立即终止并且调用订阅者的onError方法
 * `toObservable()` &mdash; returns an `Observable` that, when you subscribe to it, will terminate by calling the subscriber&#8217;s `onError` method
+* toObservable()——返回 Observable 对象，当你订阅该 Observable 时，将会立即终止并且调用订阅者的onError方法
 
 <a name="flow9" />
 
 ### 9. Return the Successful Response
 
+### 9. 返回成功的 Response
+
 If the Hystrix command succeeds, it will return the response or responses to the caller in the form of an `Observable`. Depending on how you have invoked the command in step 2, above, this `Observable` may be transformed before it is returned to you:
+
+如果 Hystrix 命令执行成功，那么将以 Observable 的形式返回单个响应或多个响应给调用者。取决于上面第2步执行命令的方式不同，返回的 Observable 在返回给你之前会通过以下方式传播： 
 
 <a href="images/hystrix-return-flow.png">[[images/hystrix-return-flow-640.png]]
 _(Click for larger view)_ </a>
 
 * `execute()` &mdash; obtains a `Future` in the same manner as does `.queue()` and then calls `get()` on this `Future` to obtain the single value emitted by the `Observable`
+* execute()——和queue()获取的方式一样获取一个 Future，然后通过Future.get()方法通过 Obsevable 获取返回的单个值 
 * `queue()` &mdash; converts the `Observable` into a `BlockingObservable` so that it can be converted into a `Future`, then returns this `Future`
+* queue()——将 Observable 转换成 BlockingObservable，以便可以转换成Future并返回 
 * `observe()` &mdash; subscribes to the `Observable` immediately and begins the flow that executes the command; returns an `Observable` that, when you `subscribe` to it, replays the emissions and notifications
+* observe()——快速订阅返回的 Observable 并开始执行订阅命令的流程；返回 Observable，当被订阅时可以重新传播和重新通知 
 * `toObservable()` &mdash; returns the `Observable` unchanged; you must `subscribe` to it in order to actually begin the flow that leads to the execution of the command
+* toObservable()——返回相同的 Observable；用户必须订阅它才能真正开始执行订阅命令的流程
 
 <a name='SequenceDiagram'/>
 
