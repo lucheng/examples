@@ -14,6 +14,10 @@ Contents    目录
 
 The following diagram shows what happens when you make a request to a service dependency by means of Hystrix:
 
+下图展示了当使用 Hystrix 构造请求，请求到一个服务依赖项时所发生的流程： 
+
+![alt text](hystrix-command-flow-chart.png "流程图")
+
 
 
 
