@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>hystrix-examples</module>
+		<module>threadpool-examples</module>
 	</modules>
 
 	<dependencies>
