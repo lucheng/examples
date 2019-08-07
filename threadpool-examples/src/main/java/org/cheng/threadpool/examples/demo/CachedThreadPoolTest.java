@@ -21,7 +21,7 @@ public class CachedThreadPoolTest {
 	public static void main(String[] args) {
 
 		ExecutorService executor = Executors.newCachedThreadPool();
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 50; i++) {
 			executor.execute(() -> {
 				System.out.println(Thread.currentThread().getName() + "正在执行");
 			});
