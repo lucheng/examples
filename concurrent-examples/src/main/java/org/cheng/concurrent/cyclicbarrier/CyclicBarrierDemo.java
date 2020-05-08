@@ -23,10 +23,9 @@ class MyThread extends Thread {
 
 public class CyclicBarrierDemo {
     public static void main(String[] args) throws InterruptedException, BrokenBarrierException {
-        CyclicBarrier cb = new CyclicBarrier(4, new Thread("barrierAction") {
+        CyclicBarrier cb = new CyclicBarrier(3, new Thread("barrierAction") {
             public void run() {
                 System.out.println(Thread.currentThread().getName() + " barrier action");
-
             }
         });
         MyThread t1 = new MyThread("t1", cb);
