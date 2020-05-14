@@ -17,6 +17,10 @@ import redis.clients.jedis.JedisPool;
 class RedisLockInternals {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(RedisLockInternals.class);
 
+    private static final String LOCK_SUCCESS = "OK";
+    private static final String SET_IF_NOT_EXIST = "NX";
+    private static final String SET_WITH_EXPIRE_TIME = "PX";
+
     private JedisPool jedisPool;
 
     /**
@@ -24,7 +28,7 @@ class RedisLockInternals {
      */
     private int retryAwait=300;
 
-    private int lockTimeout=2000;
+    private int lockTimeout=10000;
 
 
     RedisLockInternals(JedisPool jedisPool) {
@@ -63,8 +67,11 @@ class RedisLockInternals {
             List<String> args = new ArrayList<String>();
             args.add(value);
             args.add(lockTimeout+"");
-            Long ret = (Long) jedis.eval(luaScript, keys, args);
-            if( new Long(1).equals(ret)){
+//            Long ret = (Long) jedis.eval(luaScript, keys, args);
+
+            String result = jedis.set(lockId,value,SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME,lockTimeout);
+
+            if(LOCK_SUCCESS.equals(result)){
                 return value;
             }
         }finally {

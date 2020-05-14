@@ -21,6 +21,7 @@
 	</properties>
 
 	<modules>
+		<module>distributed-locks</module>
 		<module>hystrix-examples</module>
 		<module>threadpool-examples</module>
 		<module>concurrent-examples</module>
