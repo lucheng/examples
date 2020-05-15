@@ -1,0 +1,37 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+  messages:
+    encoding: utf-8
+  banner:
+    charset: utf-8
+  shardingsphere:
+    props:
+      sql:
+        show: true
+    datasource:
+      names: master,slave
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/shardingsphere-demo1?characterEncoding=utf-8
+        username: root
+        password: lucheng
+      slave:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/shardingsphere-demo2?characterEncoding=utf-8
+        username: root
+        password: lucheng
+    masterslave:
+      load-balance-algorithm-type: round_robin
+      name: dataSource
+      master-data-source-name: master
+      slave-data-source-names: slave

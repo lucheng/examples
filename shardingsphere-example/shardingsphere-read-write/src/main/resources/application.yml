@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: shardingsphere-example
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+logging:
+  level:
+    root: DEBUG
