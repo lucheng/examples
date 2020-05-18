@@ -1,5 +1,8 @@
 package org.cheng.shardingsphere.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.cheng.shardingsphere.entity.User;
 import org.cheng.shardingsphere.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,5 +60,17 @@ public class UserController {
 			userService.save(user);
 		}
 		return "success";
+	}
+
+	@ApiOperation(value = "列表")
+	@GetMapping("list")
+	public List<User> list() {
+		return userService.list();
+	}
+
+	@ApiOperation(value = "分页列表")
+	@GetMapping("page")
+	public IPage<Map<String, Object>> page() {
+		return userService.page();
 	}
 }
