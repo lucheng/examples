@@ -1,0 +1,11 @@
+logging:
+  level:
+    org.apache.zookeeper.ClientCnxn: INFO
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: lucheng
+    ssl: false
+    timeout: 10000

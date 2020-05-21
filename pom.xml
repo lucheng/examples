@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.6.RELEASE</version>
+		<version>2.2.7.RELEASE</version>
 	</parent>
 
 	<properties>
@@ -46,6 +46,8 @@
 		<module>shardingsphere-example/shardingsphere-read-write</module>
 		<module>shardingsphere-example/shardingsphere-sharding-table-read-write</module>
 		<module>shardingsphere-example/shardingsphere-db-sharding-table-read-write</module>
+		<module>io-examples</module>
+		<module>redisson-examples</module>
 	</modules>
 
 	<dependencyManagement>
