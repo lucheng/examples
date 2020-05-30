@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<springProperty scope="context" name="logAppName"
+		source="spring.application.name" />
+	<springProperty scope="context" name="active"
+		source="spring.profiles.active" />
+
+	<!-- 为logstash输出的JSON格式的Appender -->
+	<appender name="LOGSTASH"
+		class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination>localhost:5044</destination>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>{"spring_application_name":"${logAppName}","spring_profiles_active":"${active}"}
+			</customFields>
+		</encoder>
+	</appender>
+
+	<logger name="org.cheng" level="DEBUG" />
+
+	<root level="INFO">
+		<appender-ref ref="LOGSTASH" />
+	</root>
+</configuration>
