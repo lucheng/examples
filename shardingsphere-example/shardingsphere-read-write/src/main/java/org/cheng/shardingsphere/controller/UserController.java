@@ -25,6 +25,12 @@ public class UserController {
 	public void save(@Validated User dto) {
 		userService.save(dto);
 	}
+	
+	@ApiOperation(value = "批量添加")
+	@PostMapping("/saveBatch")
+	public void saveBatch() {
+		userService.saveBatch();
+	}
 
 	@ApiOperation(value = "查询")
 	@GetMapping("/{id}")

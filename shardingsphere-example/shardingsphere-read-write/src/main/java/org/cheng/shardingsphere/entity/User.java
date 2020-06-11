@@ -1,5 +1,7 @@
 package org.cheng.shardingsphere.entity;
 
+import java.time.LocalDate;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,4 +22,6 @@ public class User {
 	
 	@TableField("city")
 	private String city;
+
+	private LocalDate createTime;
 }

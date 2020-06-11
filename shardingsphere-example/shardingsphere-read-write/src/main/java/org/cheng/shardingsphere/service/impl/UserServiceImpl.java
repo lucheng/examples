@@ -1,5 +1,9 @@
 package org.cheng.shardingsphere.service.impl;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cheng.shardingsphere.entity.User;
 import org.cheng.shardingsphere.manager.IUserManager;
 import org.cheng.shardingsphere.service.IUserService;
@@ -16,6 +20,19 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void save(User dto) {
 		userManager.add(dto);
+	}
+	
+	@Override
+	public void saveBatch() {
+		List<User> list = new ArrayList<>(5000);
+		for (long i = 1; i < 2; i++) {
+			User dto = new User();
+			dto.setId(i);
+			dto.setName(""+i);
+			dto.setCreateTime(LocalDate.now());
+			list.add(dto);
+		}
+		userManager.updateBatchById(list);
 	}
 
 	@Override
@@ -38,6 +55,4 @@ public class UserServiceImpl implements IUserService {
 		User u = userManager.get(2L);
 		return dto;
 	}
-	
-
 }

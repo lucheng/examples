@@ -27,8 +27,8 @@
 		<maven.compiler.target>${jdk.version}</maven.compiler.target>
 		<maven.compiler.compilerVersion>${jdk.version}</maven.compiler.compilerVersion>
 		<druid-spring-boot-starter.version>1.1.21</druid-spring-boot-starter.version>
-		<mybatis.plus>3.2.0</mybatis.plus>
-		<mysql.version>8.0.18</mysql.version>
+		<mybatis.plus>3.3.2</mybatis.plus>
+		<mysql.version>8.0.20</mysql.version>
 		<shardingsphere.version>4.0.0-RC1</shardingsphere.version>
 		<shardingsphere.spi.impl.version>5.0.0-RC1-SNAPSHOT</shardingsphere.spi.impl.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
@@ -38,7 +38,7 @@
 		<logback.version>1.2.3</logback.version>
 	</properties>
 
-	<modules>
+<!-- 	<modules>
 		<module>distributed-locks</module>
 		<module>hystrix-examples</module>
 		<module>threadpool-examples</module>
@@ -48,7 +48,7 @@
 		<module>shardingsphere-example/shardingsphere-db-sharding-table-read-write</module>
 		<module>io-examples</module>
 		<module>redisson-examples</module>
-	</modules>
+	</modules> -->
 
 	<dependencyManagement>
 		<dependencies>
@@ -116,7 +116,17 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	
+	<distributionManagement>
+		<repository>
+			<id>rdc-releases</id>
+			<url>https://repo.rdc.aliyun.com/repository/105292-release-cv7ShD/</url>
+		</repository>
+		<snapshotRepository>
+			<id>rdc-snapshots</id>
+			<url>https://repo.rdc.aliyun.com/repository/105292-snapshot-heTEVf/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<dependencies>
 		<dependency>
 			<groupId>de.codecentric</groupId>
