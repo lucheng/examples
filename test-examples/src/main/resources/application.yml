@@ -1,0 +1,68 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+  messages:
+    encoding: utf-8
+  banner:
+    charset: utf-8
+  redis:
+    host: 127.0.0.1
+#    password: redis_test1113
+    port: 6379
+    timeout: 10000
+#    database: 0
+#    jedis:
+#      pool:
+#        max-active: 1000
+#        max-idle: 10
+#        min-idle: 0
+#        max-wait: -1
+#    cluster:
+#      nodes: 172.26.67.63:7001,172.26.67.63:7002,172.26.67.63:7003,172.26.67.63:7004,172.26.67.63:7005,172.26.67.63:7006
+  cloud:
+    gateway:
+      default-filters:
+      # 熔断降级配置
+      - name: Hystrix
+        args:
+          name : default
+          fallbackUri: 'forward:/defaultfallback'
+      routes:
+        - id: system
+          uri: lb://system
+          predicates:
+            - Path=/system/**
+          filters:
+#            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 2
+#                key-resolver: "#{@userAPIKeyResolver}"
+                key-resolver: "#{@ipKeyResolver}"
+            - name: Hystrix
+              args:
+                name : default
+                fallbackUri: 'forward:/defaultfallback'
+hystrix:
+  metrics:
+    enabled: true
+    polling-interval-ms: 1000
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 20
+        errorThresholdPercentage: 50
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 3000
+  shareSecurityContext: true

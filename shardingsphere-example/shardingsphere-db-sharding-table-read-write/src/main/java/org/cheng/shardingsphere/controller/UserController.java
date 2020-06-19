@@ -49,7 +49,7 @@ public class UserController {
 	public Object batch() {
 		for (long i = 0; i < 100; i++) {
 			User user = new User();
-			user.setId(i);
+			user.setDataSource(i);
 			user.setCity("深圳");
 			user.setName("李四");
 			userService.save(user);

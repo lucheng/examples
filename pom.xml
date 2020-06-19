@@ -29,26 +29,21 @@
 		<druid-spring-boot-starter.version>1.1.21</druid-spring-boot-starter.version>
 		<mybatis.plus>3.3.2</mybatis.plus>
 		<mysql.version>8.0.20</mysql.version>
-		<shardingsphere.version>4.0.0-RC1</shardingsphere.version>
+		<shardingsphere.version>4.1.1</shardingsphere.version>
 		<shardingsphere.spi.impl.version>5.0.0-RC1-SNAPSHOT</shardingsphere.spi.impl.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
 		<swagger2.version>2.9.2</swagger2.version>
 		<swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
 		<guava-bom.version>28.1-jre</guava-bom.version>
 		<logback.version>1.2.3</logback.version>
 	</properties>
 
-<!-- 	<modules>
-		<module>distributed-locks</module>
-		<module>hystrix-examples</module>
-		<module>threadpool-examples</module>
-		<module>concurrent-examples</module>
-		<module>shardingsphere-example/shardingsphere-read-write</module>
-		<module>shardingsphere-example/shardingsphere-sharding-table-read-write</module>
-		<module>shardingsphere-example/shardingsphere-db-sharding-table-read-write</module>
-		<module>io-examples</module>
-		<module>redisson-examples</module>
-	</modules> -->
+	<!-- <modules> <module>distributed-locks</module> <module>hystrix-examples</module> 
+		<module>threadpool-examples</module> <module>concurrent-examples</module> 
+		<module>shardingsphere-example/shardingsphere-read-write</module> <module>shardingsphere-example/shardingsphere-sharding-table-read-write</module> 
+		<module>shardingsphere-example/shardingsphere-db-sharding-table-read-write</module> 
+		<module>io-examples</module> <module>redisson-examples</module> </modules> -->
 
 	<dependencyManagement>
 		<dependencies>
@@ -60,6 +55,25 @@
 			<dependency>
 				<groupId>org.apache.shardingsphere</groupId>
 				<artifactId>sharding-jdbc-spring-namespace</artifactId>
+				<version>${shardingsphere.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.shardingsphere</groupId>
+				<artifactId>shardingsphere-transaction-core</artifactId>
+				<version>${shardingsphere.version}</version>
+			</dependency>
+
+			<!-- 使用XA事务时，需要引入此模块 -->
+			<dependency>
+				<groupId>org.apache.shardingsphere</groupId>
+				<artifactId>sharding-transaction-xa-core</artifactId>
+				<version>${shardingsphere.version}</version>
+			</dependency>
+			<!-- 使用BASE事务时，需要引入此模块 -->
+			<dependency>
+				<groupId>org.apache.shardingsphere</groupId>
+				<artifactId>sharding-transaction-base-seata-at</artifactId>
 				<version>${shardingsphere.version}</version>
 			</dependency>
 			<dependency>
@@ -81,6 +95,13 @@
 				<groupId>com.baomidou</groupId>
 				<artifactId>mybatis-plus-boot-starter</artifactId>
 				<version>${mybatis.plus}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>mysql</groupId>
@@ -116,7 +137,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>rdc-releases</id>

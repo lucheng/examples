@@ -414,9 +414,7 @@ public class ConcurrentUtils {
         if (null == ConcurrentUtils.pool) {
             ConcurrentUtils.pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
             log.info("初始化默认线程池 {}, 大小: {}", ConcurrentUtils.pool, THREAD_POOL_SIZE);
-
         }
-
         log.debug("使用线程池: {}, 大小: {}", pool, THREAD_POOL_SIZE);
         return ConcurrentUtils.pool;
     }

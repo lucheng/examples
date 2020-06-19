@@ -1,6 +1,6 @@
 package org.cheng.shardingsphere.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -12,12 +12,12 @@ import lombok.Setter;
 @TableName("user")
 public class User {
 
-	@TableId(value = "id")
+	@TableId(value = "id",type = IdType.ASSIGN_ID)
 	private Long id;
 	
-	@TableField("name")
 	private String name;
 	
-	@TableField("city")
 	private String city;
+	
+	private Long dataSource;
 }
