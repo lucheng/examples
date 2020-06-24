@@ -1,7 +1,9 @@
-package org.cheng.threadpool.examples.demo;
+package org.cheng.concurrent.threadpool;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 固定数目线程的线程池(无界队列的线程池)
@@ -16,20 +18,21 @@ import java.util.concurrent.Executors;
  * 尽可能的少的分配线程，即适用执行长期的任务。
  */
 
+@Slf4j
 public class FixedThreadPoolTest {
 
 	public static void main(String[] args) {
 		
-		ExecutorService executor = Executors.newFixedThreadPool(10);
-		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+		ExecutorService executor = Executors.newFixedThreadPool(8);
+		for (int i = 0; i <1000000 ; i++) {
 			executor.execute(() -> {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// do nothing
+				for(int j=0;j<Integer.MAX_VALUE;j++) {
+					log.error("" + j);
 				}
 			});
 		}
+		
+		executor.shutdown();
 	}
 
 }

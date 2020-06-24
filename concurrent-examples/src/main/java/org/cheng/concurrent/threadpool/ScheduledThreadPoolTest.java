@@ -1,4 +1,4 @@
-package org.cheng.threadpool.examples.demo;
+package org.cheng.concurrent.threadpool;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
