@@ -3,6 +3,11 @@ spring:
     active: dev
   application:
     name: gateway-example
+  cloud:
+    nacos:
+       discovery:
+          server-addr: localhost:8848
+          register-enabled: true
 management:
   endpoints:
     web:
@@ -17,4 +22,4 @@ management:
         auto-time-requests: true
 logging:
   level:
-    root: DEBUG
+    root: INFO

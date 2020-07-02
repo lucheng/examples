@@ -1,0 +1,16 @@
+spring:
+  profiles: dev
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+  messages:
+    encoding: utf-8
+  banner:
+    charset: utf-8
+#  cloud:
+#    nacos:
+#       discovery:
+#          server-addr: localhost:8848
+#          register-enabled: true

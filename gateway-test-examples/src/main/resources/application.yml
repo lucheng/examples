@@ -1,8 +1,15 @@
+server:
+  port: 8091
 spring:
   profiles:
     active: dev
   application:
-    name: gateway-example
+    name: test
+  cloud:
+    nacos:
+       discovery:
+          server-addr: localhost:8848
+          register-enabled: true
 management:
   endpoints:
     web:

@@ -28,24 +28,26 @@ spring:
 #      nodes: 172.26.67.63:7001,172.26.67.63:7002,172.26.67.63:7003,172.26.67.63:7004,172.26.67.63:7005,172.26.67.63:7006
   cloud:
     gateway:
-      default-filters:
+#      default-filters:
       # 熔断降级配置
-      - name: Hystrix
-        args:
-          name : default
-          fallbackUri: 'forward:/defaultfallback'
+#      - name: Hystrix
+#        args:
+#          name : default
+#          fallbackUri: 'forward:/defaultfallback'
       routes:
-        - id: system
-          uri: lb://system
+        - id: test
+          uri: lb://test
           predicates:
-            - Path=/system/**
+            - Path=/test/**
           filters:
-#            - StripPrefix=1
+            - StripPrefix=1
             - name: RequestRateLimiter
               args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 2
-#                key-resolver: "#{@userAPIKeyResolver}"
+                # 每秒最大访问次数（放令牌桶的速率）
+                redis-rate-limiter.replenishRate: 10
+                # 令牌桶最大容量（令牌桶的大小）
+                redis-rate-limiter.burstCapacity: 2000
+#               key-resolver: "#{@userAPIKeyResolver}"
                 key-resolver: "#{@ipKeyResolver}"
             - name: Hystrix
               args:

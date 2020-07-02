@@ -8,6 +8,11 @@ public class IndexController {
 
     @RequestMapping("/hello")
     public String hello(String name){
+    	try{
+            Thread.sleep(1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return "hi " + name;
     }
 
