@@ -8,6 +8,10 @@ spring:
        discovery:
           server-addr: localhost:8848
           register-enabled: true
+       config:
+          server-addr: localhost:8848
+          shared-dataids: test.yaml,test2.yaml
+          refreshable-dataids: test.yaml,test2.yaml
 management:
   endpoints:
     web:

@@ -1,0 +1,33 @@
+server:
+  port: 8092
+spring:
+  profiles:
+    active: dev
+  application:
+    name: nacos-test
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        register-enabled: true
+      config:
+        server-addr: localhost:8848
+        shared-dataids: test.yaml,test2.yaml
+        refreshable-dataids: test.yaml,test2.yaml
+#        name: ${spring.application.name}
+#        file-extension: yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+logging:
+  level:
+    root: DEBUG
