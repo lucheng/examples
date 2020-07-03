@@ -4,7 +4,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: nacos-test
+    name: nacos
   cloud:
     nacos:
       discovery:

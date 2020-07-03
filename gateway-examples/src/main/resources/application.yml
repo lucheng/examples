@@ -34,25 +34,24 @@ spring:
 #        args:
 #          name : default
 #          fallbackUri: 'forward:/defaultfallback'
-      routes:
-        - id: test
-          uri: lb://test
-          predicates:
-            - Path=/test/**
-          filters:
-            - StripPrefix=1
-            - name: RequestRateLimiter
-              args:
-                # 每秒最大访问次数（放令牌桶的速率）
-                redis-rate-limiter.replenishRate: 10
-                # 令牌桶最大容量（令牌桶的大小）
-                redis-rate-limiter.burstCapacity: 2000
-#               key-resolver: "#{@userAPIKeyResolver}"
-                key-resolver: "#{@ipKeyResolver}"
-            - name: Hystrix
-              args:
-                name : default
-                fallbackUri: 'forward:/defaultfallback'
+      discovery:
+         locator: #表明gateway开启服务注册和发现的功能，并且spring cloud gateway自动根据服务发现为每一个服务创建了一个router，# 这个router将以服务名开头的请求路径转发到对应的服务
+             enabled: true
+             lowerCaseServiceId: true
+             filters:
+               - StripPrefix=1
+               - name: RequestRateLimiter
+                 args:
+                  # 每秒最大访问次数（放令牌桶的速率）
+                  redis-rate-limiter.replenishRate: 10
+                  # 令牌桶最大容量（令牌桶的大小）
+                  redis-rate-limiter.burstCapacity: 2000
+  #               key-resolver: "#{@userAPIKeyResolver}"
+                  key-resolver: "#{@ipKeyResolver}"
+               - name: Hystrix
+                 args:
+                   name : default
+                   fallbackUri: 'forward:/defaultfallback'
 hystrix:
   metrics:
     enabled: true
