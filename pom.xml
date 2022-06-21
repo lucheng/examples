@@ -29,7 +29,7 @@
 		<alibaba.cloud.version>2.1.1.RELEASE</alibaba.cloud.version>
 		<druid-spring-boot-starter.version>1.1.21</druid-spring-boot-starter.version>
 		<mybatis.plus>3.3.2</mybatis.plus>
-		<mysql.version>8.0.20</mysql.version>
+		<mysql.version>8.0.28</mysql.version>
 		<shardingsphere.version>4.1.1</shardingsphere.version>
 		<shardingsphere.spi.impl.version>5.0.0-RC1-SNAPSHOT</shardingsphere.spi.impl.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
